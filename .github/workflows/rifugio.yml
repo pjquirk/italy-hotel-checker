@@ -1,0 +1,14 @@
+name: Checking Rifugio Availability
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check for an open spot on July 7
+        run: curl "https://api.widgets.bookingsuedtirol.com/v6/properties/13308/availabilities?from=2025-07-01&guests=%5B%5B18%2C18%5D%5D&sourceId=98&to=2025-07-31"
