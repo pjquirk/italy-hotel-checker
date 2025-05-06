@@ -19,16 +19,21 @@ jobs:
       - uses: actions/checkout@v4
 
       - name: Check for an open spot on July 7
+        id: check_availability
         run: |
           URL="https://api.widgets.bookingsuedtirol.com/v6/properties/${{ matrix.hostels.id }}/availabilities?from=2025-07-01&guests=%5B%5B18%2C18%5D%5D&sourceId=98&to=2025-07-31"
           curl -s "$URL" | jq -e -r '.[] | select(.date == "2025-07-07") | .departures[] | select(.rule == "departure_possible") | .departure'
-          if [[ $? -ne 0 ]]; then
-            echo "No available spots for the specified date."
-            exit 1
+          # Append an output if the command succeeds
+          if [[ $? -eq 0 ]]; then
+            echo "The spot is available for the specified date."
+            echo "available=true" >> $GITHUB_OUTPUTS
+          else
+            echo "No spot available for the specified date."
+            echo "available=false" >> $GITHUB_OUTPUTS
           fi
 
       - name: Notify if the spot is available
-        if: success()
+        if: success() && steps.check_availability.outputs.available == 'true'
         run: |
           echo "A spot is available for the specified date at: ${{ matrix.hostels.name }} (id: ${{ matrix.hostels.id }})."
           echo "Book it at ${{ matrix.hostels.url }}"
