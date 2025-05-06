@@ -9,10 +9,10 @@ jobs:
     strategy:
       matrix:
         hostels: [
-          { id: 12869, name: "Rifugio Fodara Vedla", url: "https://www.fodara.it" },
-          { id: 10716, name: "Rifugio Pederü", url: "https://www.pederu.it" },
-          { id: 13308, name: "Rifugio Fanes", url: "https://www.fanes.it" },
-          { id: 13004, name: "Rifugio Lavarella", url: "https://www.lavarella.it" },
+          { name: "Rifugio Fodara Vedla", url: "https://www.fodara.it", id: 12869 },
+          { name: "Rifugio Pederü", url: "https://www.pederu.it", id: 10716 },
+          { name: "Rifugio Fanes", url: "https://www.fanes.it", id: 13308 },
+          { name: "Rifugio Lavarella", url: "https://www.lavarella.it", id: 13004 },
         ]
 
     steps:
@@ -21,8 +21,13 @@ jobs:
       - name: Check for an open spot on July 7
         id: check_availability
         run: |
+          # Continue on error
+          set +e
+
+          # Query the API for availability
           URL="https://api.widgets.bookingsuedtirol.com/v6/properties/${{ matrix.hostels.id }}/availabilities?from=2025-07-01&guests=%5B%5B18%2C18%5D%5D&sourceId=98&to=2025-07-31"
           curl -s "$URL" | jq -e -r '.[] | select(.date == "2025-07-07") | .departures[] | select(.rule == "departure_possible") | .departure'
+
           # Append an output if the command succeeds
           if [[ $? -eq 0 ]]; then
             echo "The spot is available for the specified date."
