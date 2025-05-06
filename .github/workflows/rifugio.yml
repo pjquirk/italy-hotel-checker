@@ -54,6 +54,9 @@ jobs:
           if [[ $? -eq 0 ]]; then
             echo "The spot is available for $EXPECTED_DATE."
             echo "available=true" >> $GITHUB_OUTPUT
+
+            MONTH_NAME=$(date -d "2025-${{ env.MONTH }}-${{ env.DAY }}" +'%B')
+            echo "message=A spot is available for $MONTH_NAME ${{ env.DAY }} at: ${{ matrix.hostels.name }} (id: ${{ matrix.hostels.id }}). Book it at ${{ matrix.hostels.url }}" >> $GITHUB_OUTPUT
           else
             echo "No spot available for $EXPECTED_DATE."
             echo "available=false" >> $GITHUB_OUTPUT
