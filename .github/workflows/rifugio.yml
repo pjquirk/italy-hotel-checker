@@ -25,10 +25,10 @@ jobs:
     strategy:
       matrix:
         hostels: [
-          { name: "Rifugio Fodara Vedla", url: "https://www.fodara.it", id: 12869 },
-          { name: "Rifugio Pederü", url: "https://www.pederu.it", id: 10716 },
-          { name: "Rifugio Fanes", url: "https://www.fanes.it", id: 13308 },
-          { name: "Rifugio Lavarella", url: "https://www.lavarella.it", id: 13004 },
+          { name: "Rifugio Fodara Vedla", url: "https://www.fodara.it/en#YxKQED1yBxB__", id: 12869 },
+          { name: "Rifugio Pederü", url: "https://www.pederue.it/en#Y7D0a11V", id: 10716 },
+          { name: "Rifugio Fanes", url: "https://www.rifugiofanes.com/en/booking.htm", id: 13308 },
+          { name: "Rifugio Lavarella", url: "https://lavarella.it/en/book-online", id: 13004 },
         ]
 
     env:
