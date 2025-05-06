@@ -6,9 +6,32 @@ on:
 jobs:
   build:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        hostels: [
+          { id: 12869, name: "Rifugio Fodara Vedla", url: "https://www.fodara.it" },
+          { id: 10716, name: "Rifugio Pederü", url: "https://www.pederu.it" },
+          { id: 13308, name: "Rifugio Fanes", url: "https://www.fanes.it" },
+          { id: 13004, name: "Rifugio Lavarella", url: "https://www.lavarella.it" },
+        ]
 
     steps:
       - uses: actions/checkout@v4
 
       - name: Check for an open spot on July 7
-        run: curl "https://api.widgets.bookingsuedtirol.com/v6/properties/13308/availabilities?from=2025-07-01&guests=%5B%5B18%2C18%5D%5D&sourceId=98&to=2025-07-31"
+        run: |
+          URL="https://api.widgets.bookingsuedtirol.com/v6/properties/${{ matrix.hostels.id }}/availabilities?from=2025-07-01&guests=%5B%5B18%2C18%5D%5D&sourceId=98&to=2025-07-31"
+          curl -s "$URL" | jq -e -r '.[] | select(.date == "2025-07-07") | .departures[] | select(.rule == "departure_possible") | .departure'
+          if [[ $? -ne 0 ]]; then
+            echo "No available spots for the specified date."
+            exit 1
+          fi
+
+      - name: Notify if the spot is available
+        if: success()
+        run: |
+          echo "A spot is available for the specified date at: ${{ matrix.hostels.name }} (id: ${{ matrix.hostels.id }})."
+          echo "Book it at ${{ matrix.hostels.url }}"
+          # Here you can add code to send a notification, e.g., via email or Slack.
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
