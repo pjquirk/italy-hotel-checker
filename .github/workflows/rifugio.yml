@@ -68,7 +68,5 @@ jobs:
         with:
           apiToken: ${{ secrets.PUSHINATOR_API_TOKEN }}
           channelId: ${{ secrets.PUSHINATOR_CHANNEL_ID }}
-          notification: |
-            A spot is available for $(date -d "2025-${{ env.MONTH }}-${{ env.DAY }}" +"%B") at: ${{ matrix.hostels.name }} (id: ${{ matrix.hostels.id }}).
-            Book it at ${{ matrix.hostels.url }}
+          notification: ${{ steps.check_availability.outputs.message }}
 
