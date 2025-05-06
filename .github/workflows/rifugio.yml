@@ -31,10 +31,10 @@ jobs:
           # Append an output if the command succeeds
           if [[ $? -eq 0 ]]; then
             echo "The spot is available for the specified date."
-            echo "available=true" >> $GITHUB_OUTPUTS
+            echo "available=true" >> $GITHUB_OUTPUT
           else
             echo "No spot available for the specified date."
-            echo "available=false" >> $GITHUB_OUTPUTS
+            echo "available=false" >> $GITHUB_OUTPUT
           fi
 
       - name: Notify if the spot is available
