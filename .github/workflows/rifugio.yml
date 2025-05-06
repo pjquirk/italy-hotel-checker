@@ -32,9 +32,10 @@ jobs:
         ]
 
     env:
-      MONTH: ${{ github.event.inputs.month }}
-      DAY: ${{ github.event.inputs.day }}
-      GUESTS: ${{ github.event.inputs.guests }}
+      # Default to July 7th
+      MONTH: ${{ github.event.inputs.month || '07'}}
+      DAY: ${{ github.event.inputs.day || '07' }}
+      GUESTS: ${{ github.event.inputs.guests || 2}}
 
     steps:
       - name: Check for an open spot on July 7
