@@ -2,6 +2,16 @@ name: Checking Rifugio Availability
 
 on:
   workflow_dispatch:
+    inputs:
+      month:
+        description: 'Month to check availability (MM)'
+        required: true
+        default: '07'
+      guests:
+        description: 'Number of guests'
+        required: true
+        default: 2
+        type: number
 
 jobs:
   build:
@@ -15,6 +25,10 @@ jobs:
           { name: "Rifugio Lavarella", url: "https://www.lavarella.it", id: 13004 },
         ]
 
+    env:
+      MONTH: ${{ github.event.inputs.month }}
+      GUESTS: ${{ github.event.inputs.guests }}
+
     steps:
       - name: Check for an open spot on July 7
         id: check_availability
@@ -23,8 +37,8 @@ jobs:
           set +e
 
           # Query the API for availability
-          URL="https://api.widgets.bookingsuedtirol.com/v6/properties/${{ matrix.hostels.id }}/availabilities?from=2025-07-01&guests=%5B%5B18%2C18%5D%5D&sourceId=98&to=2025-07-31"
-          curl -s "$URL" | jq -e -r '.[] | select(.date == "2025-07-07") | .departures[] | select(.rule == "departure_possible") | .departure'
+          URL="https://api.widgets.bookingsuedtirol.com/v6/properties/${{ matrix.hostels.id }}/availabilities?from=2025-${{ env.MONTH }}-01&guests=%5B%5B18%${{ env.GUESTS }}C18%5D%5D&sourceId=98&to=2025-${{ env.MONTH }}-31"
+          curl -s "$URL" | jq -e -r '.[] | select(.date == "2025-${{ env.MONTH }}-07") | .departures[] | select(.rule == "departure_possible") | .departure'
 
           # Append an output if the command succeeds
           if [[ $? -eq 0 ]]; then
