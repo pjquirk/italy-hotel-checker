@@ -38,11 +38,13 @@ jobs:
       GUESTS: ${{ github.event.inputs.guests || 2}}
 
     steps:
-      - name: Check for an open spot on July 7
+      - name: Check for an open spot on given date
         id: check_availability
         run: |
           # Continue on error
           set +e
+
+          EXPECTED_DATE="2025-${{ env.MONTH }}-${{ env.DAY }}"
 
           # Query the API for availability
           URL="https://api.widgets.bookingsuedtirol.com/v6/properties/${{ matrix.hostels.id }}/availabilities?from=2025-${{ env.MONTH }}-01&guests=%5B%5B18%${{ env.GUESTS }}C18%5D%5D&sourceId=98&to=2025-${{ env.MONTH }}-31"
@@ -50,10 +52,10 @@ jobs:
 
           # Append an output if the command succeeds
           if [[ $? -eq 0 ]]; then
-            echo "The spot is available for the specified date."
+            echo "The spot is available for $EXPECTED_DATE."
             echo "available=true" >> $GITHUB_OUTPUT
           else
-            echo "No spot available for the specified date."
+            echo "No spot available for $EXPECTED_DATE."
             echo "available=false" >> $GITHUB_OUTPUT
           fi
 
@@ -64,6 +66,6 @@ jobs:
           apiToken: ${{ secrets.PUSHINATOR_API_TOKEN }}
           channelId: ${{ secrets.PUSHINATOR_CHANNEL_ID }}
           notification: |
-            A spot is available for the specified date at: ${{ matrix.hostels.name }} (id: ${{ matrix.hostels.id }}).
+            A spot is available for $(date -d "2025-${{ env.MONTH }}-${{ env.DAY }}" +"%B") at: ${{ matrix.hostels.name }} (id: ${{ matrix.hostels.id }}).
             Book it at ${{ matrix.hostels.url }}
 
