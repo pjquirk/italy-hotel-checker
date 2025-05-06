@@ -16,6 +16,8 @@ on:
         required: true
         default: 2
         type: number
+  schedule:
+    - cron: '1 * * * *' # Every hour
 
 jobs:
   build:
