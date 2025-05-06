@@ -36,10 +36,12 @@ jobs:
           fi
 
       - name: Notify if the spot is available
+        uses: appricos/pushinator-action@v1
         if: success() && steps.check_availability.outputs.available == 'true'
-        run: |
-          echo "A spot is available for the specified date at: ${{ matrix.hostels.name }} (id: ${{ matrix.hostels.id }})."
-          echo "Book it at ${{ matrix.hostels.url }}"
-          # Here you can add code to send a notification, e.g., via email or Slack.
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          apiToken: ${{ secrets.PUSHINATOR_API_TOKEN }}
+          channelId: ${{ secrets.PUSHINATOR_CHANNEL_ID }}
+          notification: |
+            A spot is available for the specified date at: ${{ matrix.hostels.name }} (id: ${{ matrix.hostels.id }}).
+            Book it at ${{ matrix.hostels.url }}
+
