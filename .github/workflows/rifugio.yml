@@ -11,11 +11,6 @@ on:
         description: 'Day to check availability (DD)'
         required: true
         default: '07' # 7th
-      guests:
-        description: 'Number of guests'
-        required: true
-        default: 2
-        type: number
   schedule:
     - cron: '1 * * * *' # Every hour
 
@@ -30,12 +25,12 @@ jobs:
           { name: "Rifugio Fanes", url: "https://www.rifugiofanes.com/en/booking.htm", id: 13308 },
           { name: "Rifugio Lavarella", url: "https://lavarella.it/en/book-online", id: 13004 },
         ]
+        guests: [1, 2]
 
     env:
       # Default to July 7th
       MONTH: ${{ github.event.inputs.month || '07'}}
       DAY: ${{ github.event.inputs.day || '07' }}
-      GUESTS: ${{ github.event.inputs.guests || 2}}
 
     steps:
       - name: Check for an open spot on given date
@@ -47,7 +42,7 @@ jobs:
           EXPECTED_DATE="2025-${{ env.MONTH }}-${{ env.DAY }}"
 
           # Query the API for availability
-          URL="https://api.widgets.bookingsuedtirol.com/v6/properties/${{ matrix.hostels.id }}/availabilities?from=2025-${{ env.MONTH }}-01&guests=%5B%5B18%${{ env.GUESTS }}C18%5D%5D&sourceId=98&to=2025-${{ env.MONTH }}-31"
+          URL="https://api.widgets.bookingsuedtirol.com/v6/properties/${{ matrix.hostels.id }}/availabilities?from=2025-${{ env.MONTH }}-01&guests=%5B%5B18%${{ matrix.guests }}C18%5D%5D&sourceId=98&to=2025-${{ env.MONTH }}-31"
           curl -s "$URL" | jq -e -r '.[] | select(.date == "2025-${{ env.MONTH }}-${{ env.DAY }}") | .departures[] | select(.rule == "departure_possible") | .departure'
 
           # Append an output if the command succeeds
@@ -56,7 +51,7 @@ jobs:
             echo "available=true" >> $GITHUB_OUTPUT
 
             MONTH_NAME=$(date -d "2025-${{ env.MONTH }}-${{ env.DAY }}" +'%B')
-            echo "message=A spot is available for $MONTH_NAME ${{ env.DAY }} for ${{ env.GUESTS }} guests at: ${{ matrix.hostels.name }} (id: ${{ matrix.hostels.id }}). Book it at ${{ matrix.hostels.url }}" >> $GITHUB_OUTPUT
+            echo "message=A spot is available for $MONTH_NAME ${{ env.DAY }} for ${{ matrix.guests }} guest(s) at: ${{ matrix.hostels.name }} (id: ${{ matrix.hostels.id }}). Book it at ${{ matrix.hostels.url }}" >> $GITHUB_OUTPUT
           else
             echo "No spot available for $EXPECTED_DATE."
             echo "available=false" >> $GITHUB_OUTPUT
