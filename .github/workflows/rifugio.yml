@@ -25,7 +25,10 @@ jobs:
           { name: "Rifugio Fanes", url: "https://www.rifugiofanes.com/en/booking.htm", id: 13308 },
           { name: "Rifugio Lavarella", url: "https://lavarella.it/en/book-online", id: 13004 },
         ]
-        guests: [1, 2]
+        guests: [
+          { count: 1, param: "18" },
+          { count: 2, param: "18%2C18" },
+        ]
 
     env:
       # Default to July 7th
@@ -42,7 +45,7 @@ jobs:
           EXPECTED_DATE="2025-${{ env.MONTH }}-${{ env.DAY }}"
 
           # Query the API for availability
-          URL="https://api.widgets.bookingsuedtirol.com/v6/properties/${{ matrix.hostels.id }}/availabilities?from=2025-${{ env.MONTH }}-01&guests=%5B%5B18%${{ matrix.guests }}C18%5D%5D&sourceId=98&to=2025-${{ env.MONTH }}-31"
+          URL="https://api.widgets.bookingsuedtirol.com/v6/properties/${{ matrix.hostels.id }}/availabilities?from=2025-${{ env.MONTH }}-01&guests=%5B%5B${{ matrix.guests.param }}%5D%5D&sourceId=98&to=2025-${{ env.MONTH }}-31"
           DATES=$(curl -s "$URL")
           echo "Response: $DATES"
           
@@ -54,7 +57,7 @@ jobs:
             echo "available=true" >> $GITHUB_OUTPUT
 
             MONTH_NAME=$(date -d "2025-${{ env.MONTH }}-${{ env.DAY }}" +'%B')
-            echo "message=A spot is available for $MONTH_NAME ${{ env.DAY }} for ${{ matrix.guests }} guest(s) at: ${{ matrix.hostels.name }} (id: ${{ matrix.hostels.id }}). Book it at ${{ matrix.hostels.url }}" >> $GITHUB_OUTPUT
+            echo "message=A spot is available for $MONTH_NAME ${{ env.DAY }} for ${{ matrix.guests.count }} guest(s) at: ${{ matrix.hostels.name }} (id: ${{ matrix.hostels.id }}). Book it at ${{ matrix.hostels.url }}" >> $GITHUB_OUTPUT
           else
             echo "No spot available for $EXPECTED_DATE."
             echo "available=false" >> $GITHUB_OUTPUT
