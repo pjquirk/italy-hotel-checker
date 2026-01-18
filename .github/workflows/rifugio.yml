@@ -3,14 +3,10 @@ name: Checking Rifugio Availability
 on:
   workflow_dispatch:
     inputs:
-      month:
-        description: 'Month to check availability (MM)'
+      date:
+        description: 'Date to check availability (YYYY-MM-DD)'
         required: true
-        default: '07' # July
-      day:
-        description: 'Day to check availability (DD)'
-        required: true
-        default: '07' # 7th
+        default: '2026-07-07'
   schedule:
     - cron: '*/30 * * * *'
 
@@ -31,9 +27,8 @@ jobs:
         ]
 
     env:
-      # Default to July 7th
-      MONTH: ${{ github.event.inputs.month || '07'}}
-      DAY: ${{ github.event.inputs.day || '07' }}
+      # Default to July 7th, 2026
+      DATE: ${{ github.event.inputs.date || '2026-07-07' }}
 
     steps:
       - name: Checkout repository
@@ -43,8 +38,7 @@ jobs:
         id: check_availability
         run: |
           ./script/check-availability.sh \
-            --month "${{ env.MONTH }}" \
-            --day "${{ env.DAY }}" \
+            --date "${{ env.DATE }}" \
             --hostel-id "${{ matrix.hostels.id }}" \
             --hostel-name "${{ matrix.hostels.name }}" \
             --guests-count "${{ matrix.guests.count }}" \

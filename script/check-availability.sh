@@ -1,19 +1,15 @@
 #!/bin/bash
 
 # Check for hotel availability on a given date
-# Usage: ./check-availability.sh --month MM --day DD --hostel-id ID --hostel-name NAME --guests-count COUNT --guests-param PARAM [--year YYYY]
+# Usage: ./check-availability.sh --date YYYY-MM-DD --hostel-id ID --hostel-name NAME --guests-count COUNT --guests-param PARAM
 
 set -o pipefail
 
 # Parse named arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
-    --month)
-      MONTH="$2"
-      shift 2
-      ;;
-    --day)
-      DAY="$2"
+    --date)
+      DATE="$2"
       shift 2
       ;;
     --hostel-id)
@@ -32,10 +28,6 @@ while [[ $# -gt 0 ]]; do
       GUESTS_PARAM="$2"
       shift 2
       ;;
-    --year)
-      YEAR="$2"
-      shift 2
-      ;;
     *)
       echo "Unknown option: $1"
       exit 1
@@ -43,15 +35,29 @@ while [[ $# -gt 0 ]]; do
   esac
 done
 
-if [[ -z "$MONTH" || -z "$DAY" || -z "$HOSTEL_ID" || -z "$HOSTEL_NAME" || -z "$GUESTS_COUNT" || -z "$GUESTS_PARAM" ]]; then
-  echo "Usage: $0 --month MM --day DD --hostel-id ID --hostel-name NAME --guests-count COUNT --guests-param PARAM [--year YYYY]"
+if [[ -z "$DATE" || -z "$HOSTEL_ID" || -z "$HOSTEL_NAME" || -z "$GUESTS_COUNT" || -z "$GUESTS_PARAM" ]]; then
+  echo "Usage: $0 --date YYYY-MM-DD --hostel-id ID --hostel-name NAME --guests-count COUNT --guests-param PARAM"
   exit 1
 fi
 
-# Default year to current year if not provided
-YEAR="${YEAR:-$(date +'%Y')}"
+# Validate date format (YYYY-MM-DD)
+if [[ ! "$DATE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
+  echo "Error: Date must be in YYYY-MM-DD format (got: $DATE)"
+  exit 1
+fi
 
-EXPECTED_DATE="${YEAR}-${MONTH}-${DAY}"
+# Validate date is a real date
+if ! date -d "$DATE" &>/dev/null; then
+  echo "Error: Invalid date: $DATE"
+  exit 1
+fi
+
+# Parse date components
+YEAR="${DATE:0:4}"
+MONTH="${DATE:5:2}"
+DAY="${DATE:8:2}"
+
+EXPECTED_DATE="${DATE}"
 
 # Query the API for availability
 URL="https://api.widgets.bookingsuedtirol.com/v6/properties/${HOSTEL_ID}/availabilities?from=${YEAR}-${MONTH}-01&guests=%5B%5B${GUESTS_PARAM}%5D%5D&sourceId=98&to=${YEAR}-${MONTH}-31"
