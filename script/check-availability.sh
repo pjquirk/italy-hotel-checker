@@ -1,7 +1,7 @@
 #!/bin/bash
 
 # Check for hotel availability on a given date
-# Usage: ./check-availability.sh --month MM --day DD --hostel-id ID --hostel-name NAME --guests-count COUNT --guests-param PARAM
+# Usage: ./check-availability.sh --month MM --day DD --hostel-id ID --hostel-name NAME --guests-count COUNT --guests-param PARAM [--year YYYY]
 
 set -o pipefail
 
@@ -32,6 +32,10 @@ while [[ $# -gt 0 ]]; do
       GUESTS_PARAM="$2"
       shift 2
       ;;
+    --year)
+      YEAR="$2"
+      shift 2
+      ;;
     *)
       echo "Unknown option: $1"
       exit 1
@@ -40,14 +44,17 @@ while [[ $# -gt 0 ]]; do
 done
 
 if [[ -z "$MONTH" || -z "$DAY" || -z "$HOSTEL_ID" || -z "$HOSTEL_NAME" || -z "$GUESTS_COUNT" || -z "$GUESTS_PARAM" ]]; then
-  echo "Usage: $0 --month MM --day DD --hostel-id ID --hostel-name NAME --guests-count COUNT --guests-param PARAM"
+  echo "Usage: $0 --month MM --day DD --hostel-id ID --hostel-name NAME --guests-count COUNT --guests-param PARAM [--year YYYY]"
   exit 1
 fi
 
-EXPECTED_DATE="2025-${MONTH}-${DAY}"
+# Default year to current year if not provided
+YEAR="${YEAR:-$(date +'%Y')}"
+
+EXPECTED_DATE="${YEAR}-${MONTH}-${DAY}"
 
 # Query the API for availability
-URL="https://api.widgets.bookingsuedtirol.com/v6/properties/${HOSTEL_ID}/availabilities?from=2025-${MONTH}-01&guests=%5B%5B${GUESTS_PARAM}%5D%5D&sourceId=98&to=2025-${MONTH}-31"
+URL="https://api.widgets.bookingsuedtirol.com/v6/properties/${HOSTEL_ID}/availabilities?from=${YEAR}-${MONTH}-01&guests=%5B%5B${GUESTS_PARAM}%5D%5D&sourceId=98&to=${YEAR}-${MONTH}-31"
 DATES=$(curl -s "$URL")
 echo "Response: $DATES"
 
