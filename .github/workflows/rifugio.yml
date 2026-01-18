@@ -5,10 +5,10 @@ on:
     inputs:
       date:
         description: 'Date to check availability (YYYY-MM-DD)'
-        required: true
+        required: false
         default: '2026-07-07'
   schedule:
-    - cron: '*/30 * * * *'
+    - cron: '35 * * * *'
 
 jobs:
   build:
