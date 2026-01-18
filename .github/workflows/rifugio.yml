@@ -16,19 +16,15 @@ jobs:
     strategy:
       matrix:
         hostels: [
-          { name: "Rifugio Fodara Vedla", url: "https://www.fodara.it/en#YxKQED1yBxB__", id: 12869 },
-          { name: "Rifugio Pederü", url: "https://www.pederue.it/en#Y7D0a11V", id: 10716 },
-          { name: "Rifugio Fanes", url: "https://www.rifugiofanes.com/en/booking.htm", id: 13308 },
-          { name: "Rifugio Lavarella", url: "https://lavarella.it/en/book-online", id: 13004 },
+          { date: "2026-09-10", name: "Rifugio Fodara Vedla", url: "https://www.fodara.it/en#YxKQED1yBxB__", id: 12869 },
+          { date: "2026-09-10", name: "Rifugio Pederü", url: "https://www.pederue.it/en#Y7D0a11V", id: 10716 },
+          { date: "2026-09-10", name: "Rifugio Fanes", url: "https://www.rifugiofanes.com/en/booking.htm", id: 13308 },
+          { date: "2026-09-10", name: "Rifugio Lavarella", url: "https://lavarella.it/en/book-online", id: 13004 },
         ]
         guests: [
           { count: 1, param: "18" },
           { count: 2, param: "18%2C18" },
         ]
-
-    env:
-      # Default to July 7th, 2026
-      DATE: ${{ github.event.inputs.date || '2026-07-07' }}
 
     steps:
       - name: Checkout repository
@@ -38,7 +34,7 @@ jobs:
         id: check_availability
         run: |
           ./script/check-availability.sh \
-            --date "${{ env.DATE }}" \
+            --date "${{ github.event.inputs.date || matrix.hostels.DATE }}" \
             --hostel-id "${{ matrix.hostels.id }}" \
             --hostel-name "${{ matrix.hostels.name }}" \
             --guests-count "${{ matrix.guests.count }}" \
