@@ -6,7 +6,6 @@ on:
       date:
         description: 'Date to check availability (YYYY-MM-DD)'
         required: false
-        default: '2026-07-07'
   schedule:
     - cron: '35 * * * *'
 
