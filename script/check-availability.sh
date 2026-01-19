@@ -58,13 +58,14 @@ MONTH="${DATE:5:2}"
 DAY="${DATE:8:2}"
 
 EXPECTED_DATE="${DATE}"
+DEPARTURE_DATE=$(date -d "${DATE} + 1 day" +'%Y-%m-%d')
 
 # Query the API for availability
-URL="https://api.widgets.bookingsuedtirol.com/v6/properties/${HOSTEL_ID}/availabilities?from=${YEAR}-${MONTH}-01&guests=%5B%5B${GUESTS_PARAM}%5D%5D&sourceId=98&to=${YEAR}-${MONTH}-31"
+URL="https://api.widgets.bookingsuedtirol.com/v6/properties/${HOSTEL_ID}/availabilities?from=${YEAR}-${MONTH}-01&guests=%5B%5B${GUESTS_PARAM}%5D%5D&sourceId=98&to=${YEAR}-${MONTH}-30"
 DATES=$(curl -s "$URL")
 echo "Response: $DATES"
 
-echo "$DATES" | jq -e -r ".[] | select(.date == \"${EXPECTED_DATE}\") | .departures[] | select(.rule == \"departure_possible\") | .departure"
+echo "$DATES" | jq -e -r ".[] | select(.date == \"${EXPECTED_DATE}\") | .departures[] | select(.rule == \"departure_possible\" and .departure == \"${DEPARTURE_DATE}\") | .departure"
 
 # Append an output if the command succeeds
 if [[ $? -eq 0 ]]; then
