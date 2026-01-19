@@ -16,10 +16,24 @@ jobs:
     strategy:
       matrix:
         hostels: [
-          { date: "2026-09-10", name: "Rifugio Fodara Vedla", url: "https://www.fodara.it/en#YxKQED1yBxB__", id: 12869 },
-          { date: "2026-09-10", name: "Rifugio Pederü", url: "https://www.pederue.it/en#Y7D0a11V", id: 10716 },
-          { date: "2026-09-10", name: "Rifugio Fanes", url: "https://www.rifugiofanes.com/en/booking.htm", id: 13308 },
-          { date: "2026-09-10", name: "Rifugio Lavarella", url: "https://lavarella.it/en/book-online", id: 13004 },
+          # Fodara Vedla is probably too close to Sennes to be useful
+          #{ date: "2026-09-13", name: "Rifugio Fodara Vedla", url: "https://www.fodara.it/en#YxKQED1yBxB__", id: 12869 },
+          { date: "2026-09-13", name: "Rifugio Pederü", url: "https://www.pederue.it/en#Y7D0a11V", id: 10716 },
+          { date: "2026-09-13", name: "Rifugio Fanes", url: "https://www.rifugiofanes.com/en/booking.htm", id: 13308 },
+          { date: "2026-09-13", name: "Rifugio Lavarella", url: "https://lavarella.it/en/book-online", id: 13004 },
+          
+          # Lagazuoi uses an HTML response that is hard to parse
+          #{ date: "2026-09-14", name: "Rifugio Lagazuoi", url: "https://rifugiolagazuoi.com/index_en.php", id: 13004 },
+          
+          # Scoiattoli uses an HTML response that is hard to parse
+          #{ date: "2026-09-14", name: "Rifugio Scoiattoli", url: "https://www.rifugioscoiattoli.it/", id: 13004 },
+          # Averau uses an HTML response that is hard to parse
+          #{ date: "2026-09-14", name: "Rifugio Averau", url: "https://rifugioaverau.bukly.com/", id: 13004 },
+          # Nuvolau isn't taking bookings until Feb 7
+          #{ date: "2026-09-14", name: "Rifugio Nuvolau", url: "https://rifugionuvolau.it/language/en/home-inglese/", id: 13117 },
+          # Cinque Torri is email only
+
+         
         ]
         guests: [
           { count: 1, param: "18" },
