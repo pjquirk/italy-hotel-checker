@@ -95,7 +95,7 @@ jobs:
             name: "Rifugio Città di Fiume", 
             url: "https://rifugiocittadifiume.it/en/book-online/", 
             availablePhrase: "vbo-info-room",
-            formData: '--form-data "checkindate=17%2F09%2F2026" --form-data "checkoutdate=18%2F09%2F2026" --form-data "option=com_vikbooking" --form-data "task=search" --form-data "checkinh=15" --form-data "checkinm=30" --form-data "checkouth=8" --form-data "checkoutm=30" --form-data "roomsnum=1" --form-data "adults[]=1" --form-data "categories=all" --form-data "Itemid=1847"'
+            formData: '--form-data "checkindate=16%2F09%2F2026" --form-data "checkoutdate=17%2F09%2F2026" --form-data "option=com_vikbooking" --form-data "task=search" --form-data "checkinh=15" --form-data "checkinm=30" --form-data "checkouth=8" --form-data "checkoutm=30" --form-data "roomsnum=1" --form-data "adults[]=1" --form-data "categories=all" --form-data "Itemid=1847"'
           }
         ]
 
