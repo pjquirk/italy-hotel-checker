@@ -10,7 +10,7 @@ on:
     - cron: '35 * * * *'
 
 jobs:
-  build:
+  api_hostels:
     runs-on: ubuntu-latest
     strategy:
       matrix:
@@ -62,3 +62,60 @@ jobs:
           channelId: ${{ secrets.PUSHINATOR_CHANNEL_ID }}
           notification: ${{ steps.check_availability.outputs.message }}
 
+  # These hostels use various HTML pages with no obvious APIs we can use
+  html_hostels:
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        hostels: [
+          # Cinque Torri is email only
+          { 
+            name: "Rifugio Lagazuoi", 
+            url: "https://rifugiolagazuoi.com/EN/prenotazione1.php", 
+            availablePhrase: "Select your favourite accommodation", 
+            formData: '--form-data "arrivo=14-09-2026" --form-data "partenza=15-09-2026" --form-data "persone=1"' 
+          },
+          { 
+            name: "Rifugio Scoiattoli", 
+            url: "https://www.rifugioscoiattoli.it/booking/eng/?action=invia&arrivo=15+September%2C+2026&arrivo_insert=2026-09-15&partenza=16+September%2C+2026&partenza_insert=2026-09-16&nadulti=2&nbambini_3_12=0", 
+            availablePhrase: "Continue", 
+          },
+          { 
+            name: "Rifugio Averau", 
+            url: "https://rifugioaverau.bukly.com/en-us/hotel/2026-09-15/2026-09-16/", 
+            availablePhrase: "Book now", 
+          },
+          # Nuvolau isn't taking bookings until Feb 7
+          # { 
+          #   name: "Rifugio Nuvolau", 
+          #   url: "https://rifugionuvolau.it/language/en/home-inglese/", 
+          #   availablePhrase: "",
+          # },
+          { 
+            name: "Rifugio Città di Fiume", 
+            url: "https://rifugiocittadifiume.it/en/book-online/", 
+            availablePhrase: "vbo-info-room",
+            formData: '--form-data "checkindate=17%2F09%2F2026" --form-data "checkoutdate=18%2F09%2F2026" --form-data "option=com_vikbooking" --form-data "task=search" --form-data "checkinh=15" --form-data "checkinm=30" --form-data "checkouth=8" --form-data "checkoutm=30" --form-data "roomsnum=1" --form-data "adults[]=1" --form-data "categories=all" --form-data "Itemid=1847"'
+          }
+        ]
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v6
+
+      - name: Check for an open spot on given date
+        id: check_availability
+        run: |
+          ./script/check-availability-html.sh \
+            --url "${{ matrix.hostels.url }}" \
+            --available-phrase "${{ matrix.hostels.availablePhrase }}" \
+            --hostel-name "${{ matrix.hostels.name }}" \
+            ${{ matrix.hostels.formData }}
+
+      - name: Notify if the spot is available
+        uses: appricos/pushinator-action@v1
+        if: success() && steps.check_availability.outputs.available == 'true'
+        with:
+          apiToken: ${{ secrets.PUSHINATOR_API_TOKEN }}
+          channelId: ${{ secrets.PUSHINATOR_CHANNEL_ID }}
+          notification: ${{ steps.check_availability.outputs.message }}
