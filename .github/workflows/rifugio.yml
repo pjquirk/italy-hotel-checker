@@ -63,15 +63,15 @@ jobs:
             formData: '--form-data "arrivo=14-09-2026" --form-data "partenza=15-09-2026" --form-data "persone=1"' 
           },
           { 
-            name: "Rifugio Scoiattoli", 
-            url: "https://www.rifugioscoiattoli.it/booking/eng/?action=invia&arrivo=15+September%2C+2026&arrivo_insert=2026-09-15&partenza=16+September%2C+2026&partenza_insert=2026-09-16&nadulti=2&nbambini_3_12=0", 
-            availablePhrase: "Continue", 
-          },
-          { 
-            name: "Rifugio Averau", 
-            url: "https://rifugioaverau.bukly.com/en-us/hotel/2026-09-15/2026-09-16/", 
-            availablePhrase: "Book now", 
-          },
+          #   name: "Rifugio Scoiattoli", 
+          #   url: "https://www.rifugioscoiattoli.it/booking/eng/?action=invia&arrivo=15+September%2C+2026&arrivo_insert=2026-09-15&partenza=16+September%2C+2026&partenza_insert=2026-09-16&nadulti=2&nbambini_3_12=0", 
+          #   availablePhrase: "Continue", 
+          # },
+          # { 
+          #   name: "Rifugio Averau", 
+          #   url: "https://rifugioaverau.bukly.com/en-us/hotel/2026-09-15/2026-09-16/", 
+          #   availablePhrase: "Book now", 
+          # },
           # Nuvolau isn't taking bookings until Feb 7
           # { 
           #   name: "Rifugio Nuvolau", 
