@@ -11,7 +11,7 @@ on:
 
 jobs:
   api_hostels:
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     strategy:
       matrix:
         hostels: [
