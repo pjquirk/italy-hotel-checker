@@ -5,6 +5,15 @@
 
 set -o pipefail
 
+# Detect OS and set date command accordingly
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  # macOS
+  DATE_CMD() { date -j -f "%Y-%m-%d" "$@"; }
+else
+  # Linux
+  DATE_CMD() { date -d "$@"; }
+fi
+
 # Parse named arguments
 while [[ $# -gt 0 ]]; do
   case $1 in
@@ -47,7 +56,7 @@ if [[ ! "$DATE" =~ ^[0-9]{4}-[0-9]{2}-[0-9]{2}$ ]]; then
 fi
 
 # Validate date is a real date
-if ! date -d "$DATE" &>/dev/null; then
+if ! DATE_CMD "$DATE" &>/dev/null; then
   echo "Error: Invalid date: $DATE"
   exit 1
 fi
@@ -58,7 +67,7 @@ MONTH="${DATE:5:2}"
 DAY="${DATE:8:2}"
 
 EXPECTED_DATE="${DATE}"
-DEPARTURE_DATE=$(date -d "${DATE} + 1 day" +'%Y-%m-%d')
+DEPARTURE_DATE=$(DATE_CMD "$DATE" "+%s" | xargs -I {} date -f "%s" -r {} -v+1d +'%Y-%m-%d')
 
 # Query the API for availability
 URL="https://api.widgets.bookingsuedtirol.com/v6/properties/${HOSTEL_ID}/availabilities?from=${YEAR}-${MONTH}-01&guests=%5B%5B${GUESTS_PARAM}%5D%5D&sourceId=98&to=${YEAR}-${MONTH}-30"
@@ -73,7 +82,7 @@ if [[ $? -eq 0 ]]; then
   echo "The spot is available for $EXPECTED_DATE."
   echo "available=true" >> "$GITHUB_OUTPUT"
 
-  MONTH_NAME=$(date -d "${EXPECTED_DATE}" +'%B')
+  MONTH_NAME=$(DATE_CMD "$EXPECTED_DATE" +'%B')
   echo "message=A spot is available for ${MONTH_NAME} ${DAY} for ${GUESTS_COUNT} guest(s) at: ${HOSTEL_NAME} (id: ${HOSTEL_ID})." >> "$GITHUB_OUTPUT"
 else
   echo "No spot available for $EXPECTED_DATE."
