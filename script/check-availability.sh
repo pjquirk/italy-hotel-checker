@@ -67,7 +67,13 @@ MONTH="${DATE:5:2}"
 DAY="${DATE:8:2}"
 
 EXPECTED_DATE="${DATE}"
-DEPARTURE_DATE=$(DATE_CMD "$DATE" "+%s" | xargs -I {} date -f "%s" -r {} -v+1d +'%Y-%m-%d')
+
+# Calculate departure date (next day) with platform-specific logic
+if [[ "$OSTYPE" == "darwin"* ]]; then
+  DEPARTURE_DATE=$(date -j -f "%Y-%m-%d" -v +1d "$DATE" +'%Y-%m-%d')
+else
+  DEPARTURE_DATE=$(date -d "$DATE + 1 day" +'%Y-%m-%d')
+fi
 
 # Query the API for availability
 URL="https://api.widgets.bookingsuedtirol.com/v6/properties/${HOSTEL_ID}/availabilities?from=${YEAR}-${MONTH}-01&guests=%5B%5B${GUESTS_PARAM}%5D%5D&sourceId=98&to=${YEAR}-${MONTH}-30"
