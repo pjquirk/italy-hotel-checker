@@ -3,7 +3,7 @@
 # Check for hotel availability on a given date
 # Usage: ./check-availability.sh --date YYYY-MM-DD --hostel-id ID --hostel-name NAME --guests-count COUNT --guests-param PARAM
 
-set -euo pipefail
+set -o pipefail
 
 # Detect OS and set date command accordingly
 if [[ "$OSTYPE" == "darwin"* ]]; then
