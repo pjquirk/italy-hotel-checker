@@ -21,7 +21,7 @@ jobs:
           # Pederü showed single person availability, but is still probably too close to Sennes
           # { date: "2026-09-13", name: "Rifugio Pederü", url: "https://www.pederue.it/en#Y7D0a11V", id: 10716 },
           # { date: "2026-09-13", name: "Rifugio Fanes", url: "https://www.rifugiofanes.com/en/booking.htm", id: 13308 },
-          # { date: "2026-09-13", name: "Rifugio Lavarella", url: "https://lavarella.it/en/book-online", id: 13004 },
+          { date: "2026-09-13", name: "Rifugio Lavarella", url: "https://lavarella.it/en/book-online", id: 13004 },
         ]
         guests: [
           { count: 1, param: "18" },
