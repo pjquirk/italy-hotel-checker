@@ -11,6 +11,7 @@ on:
 
 jobs:
   api_hostels:
+    if: false # ignore when there's no hostels here
     runs-on: self-hosted
     strategy:
       matrix:
